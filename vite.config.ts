@@ -1,0 +1,32 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
+import { fileURLToPath, URL } from 'node:url';
+
+export default defineConfig(({ command }) => ({
+  // GitHub Pages serves the app from /<repo-name>/; Vercel/dev still use '/'.
+  base: command === 'build' ? './' : '/',
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.svg', 'icon-192.png', 'icon-512.png'],
+      manifest: {
+        name: 'Pro POS Mobil',
+        short_name: 'Pro POS',
+        description: 'Pro POS mobil yönetim uygulaması',
+        theme_color: '#0f766e',
+        background_color: '#f1f5f9',
+        display: 'standalone',
+        orientation: 'portrait',
+        start_url: './',
+        icons: [
+          { src: './icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: './icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+        ]
+      },
+      workbox: { globPatterns: ['**/*.{js,css,html,svg,png,ico}'] }
+    })
+  ],
+  resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } }
+}));
